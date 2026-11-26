@@ -1,0 +1,704 @@
+{
+  "manifest_version": 1,
+  "type": "device",
+  "name": "ECHONET Lite",
+  "description": {
+    "en": "Control your ECHONET Lite air conditioners, water heaters, lights and energy devices locally.",
+    "fr": "Pilotez en local vos climatiseurs, chauffe-eau, éclairages et compteurs ECHONET Lite.",
+    "de": "Steuern Sie ECHONET-Lite-Klimaanlagen, Warmwasser, Licht und Energiegeräte lokal.",
+    "es": "Controle en local sus aires acondicionados, calentadores, luces y equipos ECHONET Lite."
+  },
+  "version": "0.0.0",
+  "docker_image": "ghcr.io/gboulvin/gladys-echonet-lite:0.0.0",
+  "gladys_version": ">=5.3.0",
+  "cover_image": "https://raw.githubusercontent.com/gboulvin/Gladys-ECHONET-Lite/main/cover.png",
+  "categories": ["climate", "energy", "protocols"],
+  "keywords": [
+    "echonet",
+    "echonet lite",
+    "mitsubishi",
+    "daikin",
+    "panasonic",
+    "sharp",
+    "fujitsu",
+    "toshiba",
+    "ecocute",
+    "hems"
+  ],
+  "countries": ["JP"],
+  "transports": ["local"],
+  "network_discovery": [{ "type": "udp-active-broadcast", "ports": [3610] }],
+  "config_schema": [
+    {
+      "key": "intro",
+      "type": "section",
+      "label": {
+        "en": "Getting started",
+        "fr": "Pour commencer",
+        "de": "Erste Schritte",
+        "es": "Primeros pasos"
+      },
+      "description": {
+        "en": "ECHONET Lite is the Japanese home network standard (air conditioners, EcoCute water heaters, smart meters, solar inverters...). Devices are found on your local network: no account, no cloud. If a device does not show up, list its IP address below.",
+        "fr": "ECHONET Lite est le standard japonais du réseau domestique (climatiseurs, chauffe-eau EcoCute, compteurs communicants, onduleurs solaires...). Les appareils sont trouvés sur votre réseau local : pas de compte, pas de cloud. Si un appareil n'apparaît pas, indiquez son adresse IP ci-dessous.",
+        "de": "ECHONET Lite ist der japanische Heimnetzstandard (Klimaanlagen, EcoCute-Warmwasserbereiter, intelligente Zähler, Solarwechselrichter...). Die Geräte werden im lokalen Netzwerk gefunden: kein Konto, keine Cloud. Erscheint ein Gerät nicht, tragen Sie unten seine IP-Adresse ein.",
+        "es": "ECHONET Lite es el estándar japonés de red doméstica (aires acondicionados, calentadores EcoCute, contadores inteligentes, inversores solares...). Los dispositivos se encuentran en su red local: sin cuenta ni nube. Si un dispositivo no aparece, indique su dirección IP abajo."
+      },
+      "links": [
+        {
+          "url": "https://echonet.jp/english/",
+          "label": {
+            "en": "ECHONET Consortium",
+            "fr": "Consortium ECHONET",
+            "de": "ECHONET-Konsortium",
+            "es": "Consorcio ECHONET"
+          }
+        }
+      ]
+    },
+    {
+      "key": "broadcast_discovery",
+      "type": "boolean",
+      "label": {
+        "en": "Automatic discovery",
+        "fr": "Découverte automatique",
+        "de": "Automatische Erkennung",
+        "es": "Descubrimiento automático"
+      },
+      "description": {
+        "en": "Ask Gladys to broadcast an ECHONET Lite search request on the local network.",
+        "fr": "Demande à Gladys de diffuser une requête de recherche ECHONET Lite sur le réseau local.",
+        "de": "Lässt Gladys eine ECHONET-Lite-Suchanfrage im lokalen Netzwerk senden.",
+        "es": "Pide a Gladys que difunda una búsqueda ECHONET Lite en la red local."
+      },
+      "required": false,
+      "default": true
+    },
+    {
+      "key": "hosts",
+      "type": "string",
+      "label": {
+        "en": "Device IP addresses",
+        "fr": "Adresses IP des appareils",
+        "de": "IP-Adressen der Geräte",
+        "es": "Direcciones IP de los dispositivos"
+      },
+      "description": {
+        "en": "Optional. IP addresses of ECHONET Lite devices or adapters, separated by commas. Give them a fixed IP in your router.",
+        "fr": "Facultatif. Adresses IP des appareils ou adaptateurs ECHONET Lite, séparées par des virgules. Fixez leur IP dans votre box.",
+        "de": "Optional. IP-Adressen der ECHONET-Lite-Geräte oder -Adapter, durch Kommas getrennt. Vergeben Sie im Router feste IPs.",
+        "es": "Opcional. Direcciones IP de los dispositivos o adaptadores ECHONET Lite, separadas por comas. Fije su IP en el router."
+      },
+      "placeholder": {
+        "en": "e.g. 192.168.1.20, 192.168.1.21",
+        "fr": "ex. 192.168.1.20, 192.168.1.21",
+        "de": "z. B. 192.168.1.20, 192.168.1.21",
+        "es": "p. ej. 192.168.1.20, 192.168.1.21"
+      },
+      "required": false
+    },
+    {
+      "key": "subnet",
+      "type": "string",
+      "label": {
+        "en": "Subnet to scan",
+        "fr": "Sous-réseau à analyser",
+        "de": "Zu durchsuchendes Subnetz",
+        "es": "Subred a explorar"
+      },
+      "description": {
+        "en": "Optional. When automatic discovery finds nothing, query every address of this subnet (/22 to /32).",
+        "fr": "Facultatif. Si la découverte automatique ne trouve rien, interroge chaque adresse de ce sous-réseau (/22 à /32).",
+        "de": "Optional. Findet die automatische Erkennung nichts, wird jede Adresse dieses Subnetzes abgefragt (/22 bis /32).",
+        "es": "Opcional. Si el descubrimiento automático no encuentra nada, consulta cada dirección de esta subred (/22 a /32)."
+      },
+      "placeholder": {
+        "en": "e.g. 192.168.1.0/24",
+        "fr": "ex. 192.168.1.0/24",
+        "de": "z. B. 192.168.1.0/24",
+        "es": "p. ej. 192.168.1.0/24"
+      },
+      "required": false
+    },
+    {
+      "key": "poll_frequency",
+      "type": "number",
+      "label": {
+        "en": "Refresh interval (s)",
+        "fr": "Intervalle de rafraîchissement (s)",
+        "de": "Aktualisierungsintervall (s)",
+        "es": "Intervalo de actualización (s)"
+      },
+      "description": {
+        "en": "How often devices are read, in seconds (one minute minimum). Motion sensors are read every 10 seconds.",
+        "fr": "Fréquence de lecture des appareils, en secondes (une minute minimum). Les détecteurs de présence sont lus toutes les 10 secondes.",
+        "de": "Wie oft die Geräte gelesen werden, in Sekunden (mindestens eine Minute). Bewegungsmelder werden alle 10 Sekunden gelesen.",
+        "es": "Frecuencia de lectura de los dispositivos, en segundos (un minuto como mínimo). Los sensores de presencia se leen cada 10 segundos."
+      },
+      "required": false,
+      "default": 60,
+      "min": 60,
+      "max": 3600
+    },
+    {
+      "key": "request_timeout",
+      "type": "number",
+      "label": {
+        "en": "Answer timeout (s)",
+        "fr": "Délai de réponse (s)",
+        "de": "Antwortzeitlimit (s)",
+        "es": "Tiempo de espera (s)"
+      },
+      "description": {
+        "en": "How long to wait for a device's answer. Raise it for slow Wi-Fi adapters.",
+        "fr": "Temps d'attente de la réponse d'un appareil. Augmentez-le pour les adaptateurs Wi-Fi lents.",
+        "de": "Wartezeit auf die Antwort eines Geräts. Für langsame WLAN-Adapter erhöhen.",
+        "es": "Tiempo de espera de la respuesta de un dispositivo. Auméntelo para adaptadores Wi-Fi lentos."
+      },
+      "required": false,
+      "default": 3,
+      "min": 1,
+      "max": 10
+    }
+  ],
+  "actions": [
+    {
+      "key": "discover",
+      "label": {
+        "en": "Search for devices",
+        "fr": "Rechercher les appareils",
+        "de": "Nach Geräten suchen",
+        "es": "Buscar dispositivos"
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "key": "test_host",
+      "label": {
+        "en": "Test an IP address",
+        "fr": "Tester une adresse IP",
+        "de": "IP-Adresse testen",
+        "es": "Probar una dirección IP"
+      },
+      "timeout_seconds": 60,
+      "fields": [
+        {
+          "key": "host",
+          "type": "string",
+          "label": {
+            "en": "IP address",
+            "fr": "Adresse IP",
+            "de": "IP-Adresse",
+            "es": "Dirección IP"
+          },
+          "placeholder": {
+            "en": "e.g. 192.168.1.20",
+            "fr": "ex. 192.168.1.20",
+            "de": "z. B. 192.168.1.20",
+            "es": "p. ej. 192.168.1.20"
+          },
+          "required": true
+        }
+      ]
+    }
+  ],
+  "scene_triggers": [
+    {
+      "key": "motion_detected",
+      "label": {
+        "en": "ECHONET motion detected",
+        "fr": "Présence ECHONET détectée",
+        "de": "ECHONET-Bewegung erkannt",
+        "es": "Presencia ECHONET detectada"
+      },
+      "description": {
+        "en": "An ECHONET Lite human detection sensor detected someone.",
+        "fr": "Un détecteur de présence ECHONET Lite a détecté quelqu'un.",
+        "de": "Ein ECHONET-Lite-Anwesenheitssensor hat jemanden erkannt.",
+        "es": "Un sensor de presencia ECHONET Lite ha detectado a alguien."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": { "en": "Sensor", "fr": "Détecteur", "de": "Sensor", "es": "Sensor" }
+        }
+      ],
+      "variables": [
+        {
+          "key": "device_name",
+          "type": "string",
+          "label": {
+            "en": "Sensor name",
+            "fr": "Nom du détecteur",
+            "de": "Name des Sensors",
+            "es": "Nombre del sensor"
+          }
+        }
+      ]
+    },
+    {
+      "key": "fault_detected",
+      "label": {
+        "en": "ECHONET device fault",
+        "fr": "Panne d'un appareil ECHONET",
+        "de": "Störung eines ECHONET-Geräts",
+        "es": "Avería de un equipo ECHONET"
+      },
+      "description": {
+        "en": "An ECHONET Lite device reports a fault (fault status property).",
+        "fr": "Un appareil ECHONET Lite signale une panne (propriété d'état de défaut).",
+        "de": "Ein ECHONET-Lite-Gerät meldet eine Störung (Fehlerstatus).",
+        "es": "Un dispositivo ECHONET Lite informa de una avería (estado de fallo)."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": { "en": "Device", "fr": "Appareil", "de": "Gerät", "es": "Dispositivo" }
+        }
+      ],
+      "variables": [
+        {
+          "key": "device_name",
+          "type": "string",
+          "label": {
+            "en": "Device name",
+            "fr": "Nom de l'appareil",
+            "de": "Gerätename",
+            "es": "Nombre del dispositivo"
+          }
+        }
+      ]
+    },
+    {
+      "key": "device_unreachable",
+      "label": {
+        "en": "ECHONET device offline",
+        "fr": "Appareil ECHONET injoignable",
+        "de": "ECHONET-Gerät offline",
+        "es": "Equipo ECHONET sin conexión"
+      },
+      "description": {
+        "en": "An ECHONET Lite device that answered stopped answering.",
+        "fr": "Un appareil ECHONET Lite qui répondait ne répond plus.",
+        "de": "Ein ECHONET-Lite-Gerät, das geantwortet hat, antwortet nicht mehr.",
+        "es": "Un dispositivo ECHONET Lite que respondía ha dejado de responder."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": { "en": "Device", "fr": "Appareil", "de": "Gerät", "es": "Dispositivo" }
+        }
+      ],
+      "variables": [
+        {
+          "key": "device_name",
+          "type": "string",
+          "label": {
+            "en": "Device name",
+            "fr": "Nom de l'appareil",
+            "de": "Gerätename",
+            "es": "Nombre del dispositivo"
+          }
+        },
+        {
+          "key": "ip_address",
+          "type": "string",
+          "label": {
+            "en": "IP address",
+            "fr": "Adresse IP",
+            "de": "IP-Adresse",
+            "es": "Dirección IP"
+          }
+        }
+      ]
+    }
+  ],
+  "scene_actions": [
+    {
+      "key": "set_air_conditioner",
+      "label": {
+        "en": "Set an ECHONET air conditioner",
+        "fr": "Régler un climatiseur ECHONET",
+        "de": "ECHONET-Klimaanlage einstellen",
+        "es": "Ajustar un aire acondicionado ECHONET"
+      },
+      "description": {
+        "en": "Power, mode, temperature and fan speed in one step. Empty fields are left unchanged.",
+        "fr": "Marche, mode, température et ventilation en une étape. Les champs vides ne changent pas.",
+        "de": "Betrieb, Modus, Temperatur und Lüfter in einem Schritt. Leere Felder bleiben unverändert.",
+        "es": "Encendido, modo, temperatura y ventilación en un paso. Los campos vacíos no cambian."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Air conditioner",
+            "fr": "Climatiseur",
+            "de": "Klimaanlage",
+            "es": "Aire acondicionado"
+          },
+          "required": true
+        },
+        {
+          "key": "power",
+          "type": "select",
+          "label": { "en": "Power", "fr": "Marche", "de": "Betrieb", "es": "Encendido" },
+          "options": [
+            {
+              "value": "on",
+              "label": { "en": "On", "fr": "Marche", "de": "Ein", "es": "Encendido" }
+            },
+            {
+              "value": "off",
+              "label": { "en": "Off", "fr": "Arrêt", "de": "Aus", "es": "Apagado" }
+            }
+          ]
+        },
+        {
+          "key": "mode",
+          "type": "select",
+          "label": { "en": "Mode", "fr": "Mode", "de": "Modus", "es": "Modo" },
+          "options": [
+            {
+              "value": "auto",
+              "label": { "en": "Auto", "fr": "Auto", "de": "Automatik", "es": "Automático" }
+            },
+            {
+              "value": "cool",
+              "label": { "en": "Cooling", "fr": "Froid", "de": "Kühlen", "es": "Frío" }
+            },
+            {
+              "value": "heat",
+              "label": { "en": "Heating", "fr": "Chauffage", "de": "Heizen", "es": "Calor" }
+            },
+            {
+              "value": "dry",
+              "label": {
+                "en": "Dry",
+                "fr": "Déshumidification",
+                "de": "Entfeuchten",
+                "es": "Deshumidificar"
+              }
+            },
+            {
+              "value": "fan",
+              "label": { "en": "Fan", "fr": "Ventilation", "de": "Lüften", "es": "Ventilación" }
+            }
+          ]
+        },
+        {
+          "key": "target_temperature",
+          "type": "number",
+          "label": {
+            "en": "Target temperature (°C)",
+            "fr": "Température de consigne (°C)",
+            "de": "Solltemperatur (°C)",
+            "es": "Temperatura de consigna (°C)"
+          },
+          "min": 16,
+          "max": 32
+        },
+        {
+          "key": "fan_speed",
+          "type": "select",
+          "label": {
+            "en": "Fan speed",
+            "fr": "Ventilation",
+            "de": "Lüfterstufe",
+            "es": "Velocidad del ventilador"
+          },
+          "options": [
+            {
+              "value": "auto",
+              "label": { "en": "Auto", "fr": "Auto", "de": "Automatik", "es": "Automático" }
+            },
+            {
+              "value": "low",
+              "label": { "en": "Low", "fr": "Faible", "de": "Niedrig", "es": "Baja" }
+            },
+            {
+              "value": "low_mid",
+              "label": {
+                "en": "Low-medium",
+                "fr": "Faible-moyenne",
+                "de": "Niedrig-mittel",
+                "es": "Baja-media"
+              }
+            },
+            {
+              "value": "mid",
+              "label": { "en": "Medium", "fr": "Moyenne", "de": "Mittel", "es": "Media" }
+            },
+            {
+              "value": "mid_high",
+              "label": {
+                "en": "Medium-high",
+                "fr": "Moyenne-forte",
+                "de": "Mittel-hoch",
+                "es": "Media-alta"
+              }
+            },
+            {
+              "value": "high",
+              "label": { "en": "High", "fr": "Forte", "de": "Hoch", "es": "Alta" }
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "key": "success",
+          "type": "boolean",
+          "label": {
+            "en": "Command applied",
+            "fr": "Commande appliquée",
+            "de": "Befehl ausgeführt",
+            "es": "Orden aplicada"
+          }
+        }
+      ]
+    },
+    {
+      "key": "refresh_device",
+      "label": {
+        "en": "Refresh an ECHONET device",
+        "fr": "Rafraîchir un appareil ECHONET",
+        "de": "ECHONET-Gerät aktualisieren",
+        "es": "Actualizar un equipo ECHONET"
+      },
+      "description": {
+        "en": "Read the device now and update its values in Gladys.",
+        "fr": "Lit l'appareil maintenant et met à jour ses valeurs dans Gladys.",
+        "de": "Liest das Gerät sofort und aktualisiert seine Werte in Gladys.",
+        "es": "Lee el dispositivo ahora y actualiza sus valores en Gladys."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": { "en": "Device", "fr": "Appareil", "de": "Gerät", "es": "Dispositivo" },
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "key": "reachable",
+          "type": "boolean",
+          "label": {
+            "en": "Device answered",
+            "fr": "L'appareil a répondu",
+            "de": "Gerät hat geantwortet",
+            "es": "El dispositivo respondió"
+          }
+        }
+      ]
+    },
+    {
+      "key": "read_property",
+      "label": {
+        "en": "Read an ECHONET property",
+        "fr": "Lire une propriété ECHONET",
+        "de": "ECHONET-Eigenschaft lesen",
+        "es": "Leer una propiedad ECHONET"
+      },
+      "description": {
+        "en": "Advanced: read any property (EPC) of a device.",
+        "fr": "Avancé : lit n'importe quelle propriété (EPC) d'un appareil.",
+        "de": "Erweitert: liest eine beliebige Eigenschaft (EPC) eines Geräts.",
+        "es": "Avanzado: lee cualquier propiedad (EPC) de un dispositivo."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": { "en": "Device", "fr": "Appareil", "de": "Gerät", "es": "Dispositivo" },
+          "required": true
+        },
+        {
+          "key": "epc",
+          "type": "string",
+          "label": {
+            "en": "Property code (EPC, hex)",
+            "fr": "Code de propriété (EPC, hex)",
+            "de": "Eigenschaftscode (EPC, hex)",
+            "es": "Código de propiedad (EPC, hex)"
+          },
+          "placeholder": { "en": "e.g. 80", "fr": "ex. 80", "de": "z. B. 80", "es": "p. ej. 80" },
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "key": "success",
+          "type": "boolean",
+          "label": {
+            "en": "Property read",
+            "fr": "Propriété lue",
+            "de": "Eigenschaft gelesen",
+            "es": "Propiedad leída"
+          }
+        },
+        {
+          "key": "value_hex",
+          "type": "string",
+          "label": {
+            "en": "Value (hex)",
+            "fr": "Valeur (hex)",
+            "de": "Wert (hex)",
+            "es": "Valor (hex)"
+          }
+        },
+        {
+          "key": "value_number",
+          "type": "number",
+          "label": {
+            "en": "Value (number)",
+            "fr": "Valeur (nombre)",
+            "de": "Wert (Zahl)",
+            "es": "Valor (número)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "write_property",
+      "label": {
+        "en": "Write an ECHONET property",
+        "fr": "Écrire une propriété ECHONET",
+        "de": "ECHONET-Eigenschaft schreiben",
+        "es": "Escribir una propiedad ECHONET"
+      },
+      "description": {
+        "en": "Advanced: write any property (EPC) of a device, e.g. 80 = 30 to turn it on.",
+        "fr": "Avancé : écrit n'importe quelle propriété (EPC), ex. 80 = 30 pour allumer.",
+        "de": "Erweitert: schreibt eine beliebige Eigenschaft (EPC), z. B. 80 = 30 zum Einschalten.",
+        "es": "Avanzado: escribe cualquier propiedad (EPC), p. ej. 80 = 30 para encender."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": { "en": "Device", "fr": "Appareil", "de": "Gerät", "es": "Dispositivo" },
+          "required": true
+        },
+        {
+          "key": "epc",
+          "type": "string",
+          "label": {
+            "en": "Property code (EPC, hex)",
+            "fr": "Code de propriété (EPC, hex)",
+            "de": "Eigenschaftscode (EPC, hex)",
+            "es": "Código de propiedad (EPC, hex)"
+          },
+          "placeholder": { "en": "e.g. 80", "fr": "ex. 80", "de": "z. B. 80", "es": "p. ej. 80" },
+          "required": true
+        },
+        {
+          "key": "value",
+          "type": "string",
+          "label": {
+            "en": "Value (hex)",
+            "fr": "Valeur (hex)",
+            "de": "Wert (hex)",
+            "es": "Valor (hex)"
+          },
+          "placeholder": { "en": "e.g. 30", "fr": "ex. 30", "de": "z. B. 30", "es": "p. ej. 30" },
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "key": "success",
+          "type": "boolean",
+          "label": {
+            "en": "Property written",
+            "fr": "Propriété écrite",
+            "de": "Eigenschaft geschrieben",
+            "es": "Propiedad escrita"
+          }
+        }
+      ]
+    }
+  ],
+  "widgets": [
+    {
+      "key": "devices_status",
+      "label": {
+        "en": "ECHONET Lite devices",
+        "fr": "Appareils ECHONET Lite",
+        "de": "ECHONET-Lite-Geräte",
+        "es": "Equipos ECHONET Lite"
+      },
+      "description": {
+        "en": "Whether each ECHONET Lite device answers or reports a fault.",
+        "fr": "Indique si chaque appareil ECHONET Lite répond ou signale une panne.",
+        "de": "Zeigt, ob jedes ECHONET-Lite-Gerät antwortet oder eine Störung meldet.",
+        "es": "Indica si cada dispositivo ECHONET Lite responde o informa de una avería."
+      },
+      "icon": "cpu",
+      "action_timeout_seconds": 120
+    },
+    {
+      "key": "air_conditioner",
+      "label": {
+        "en": "ECHONET air conditioner",
+        "fr": "Climatiseur ECHONET",
+        "de": "ECHONET-Klimaanlage",
+        "es": "Aire acondicionado ECHONET"
+      },
+      "description": {
+        "en": "Room and target temperature, humidity, and quick controls.",
+        "fr": "Températures ambiante et de consigne, humidité et commandes rapides.",
+        "de": "Raum- und Solltemperatur, Feuchte und Schnellsteuerung.",
+        "es": "Temperatura ambiente y de consigna, humedad y mandos rápidos."
+      },
+      "icon": "wind",
+      "settings": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Air conditioner",
+            "fr": "Climatiseur",
+            "de": "Klimaanlage",
+            "es": "Aire acondicionado"
+          },
+          "required": true
+        }
+      ],
+      "action_timeout_seconds": 30
+    },
+    {
+      "key": "energy",
+      "label": {
+        "en": "ECHONET energy",
+        "fr": "Énergie ECHONET",
+        "de": "ECHONET-Energie",
+        "es": "Energía ECHONET"
+      },
+      "description": {
+        "en": "Live grid power, solar production and storage battery.",
+        "fr": "Puissance réseau, production solaire et batterie en direct.",
+        "de": "Netzleistung, Solarproduktion und Batteriespeicher live.",
+        "es": "Potencia de red, producción solar y batería en directo."
+      },
+      "icon": "zap"
+    }
+  ]
+}
