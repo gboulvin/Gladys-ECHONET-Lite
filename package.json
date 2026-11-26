@@ -1,6 +1,6 @@
 {
   "name": "gladys-echonet-lite",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "ECHONET Lite external integration for Gladys Assistant: air conditioners, water heaters, lights, shutters and energy devices on the local network.",
   "type": "module",
